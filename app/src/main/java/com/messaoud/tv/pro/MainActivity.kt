@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
@@ -50,7 +51,7 @@ data class ServerAccount(
 data class MediaItem(
     val id: String,
     val name: String,
-    val streamType: String, // live, movie, series
+    val streamType: String,
     val streamId: String,
     val containerExt: String = "mp4"
 )
@@ -58,14 +59,16 @@ data class MediaItem(
 class MainActivity : ComponentActivity() {
 
     private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
+        .connectTimeout(12, TimeUnit.SECONDS)
+        .readTimeout(12, TimeUnit.SECONDS)
         .build()
+
+    private val configUrl = "https://raw.githubusercontent.com/doudihmd-blip/messaoud-tv/main/version.json"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            NeoApp()
+            AppRoot()
         }
     }
 
@@ -86,26 +89,88 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
+    fun AppRoot() {
+        var isBlocked by remember { mutableStateOf(false) }
+        var blockMsg by remember { mutableStateOf("") }
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                try {
+                    val req = Request.Builder().url(configUrl).build()
+                    val resp = httpClient.newCall(req).execute()
+                    val body = resp.body?.string()
+                    if (body != null) {
+                        val obj = JSONObject(body)
+                        val active = obj.optBoolean("is_active", true)
+                        if (!active) {
+                            isBlocked = true
+                            blockMsg = obj.optString("blocked_message", "عذراً، الخدمة متوقفة حالياً.")
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+        }
+
+        if (isBlocked) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(BgDark)
+                    .padding(32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = CardDark,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, Color(0xFFEF4444)),
+                    modifier = Modifier.widthIn(max = 500.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(28.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("🔒", fontSize = 48.sp)
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Text("تم إيقاف الخدمة", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(blockMsg, color = Color(0xFFE2E8F0), fontSize = 15.sp, textAlign = TextAlign.Center)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Button(
+                            onClick = { finishAffinity() },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444)),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("خروج", color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        } else {
+            NeoApp()
+        }
+    }
+
+    @Composable
     fun NeoApp() {
         val sp = getSharedPreferences("messaoud_tv_data", Context.MODE_PRIVATE)
         val gson = Gson()
 
         val accounts = remember {
             val raw = sp.getString("accounts_json", null)
-            val initial: MutableList<ServerAccount> = if (raw != null) {
+            val list: MutableList<ServerAccount> = if (raw != null) {
                 gson.fromJson(raw, object : TypeToken<MutableList<ServerAccount>>() {}.type)
             } else {
                 mutableListOf(
-                    ServerAccount("FALCON VIP 4K", "http://falcon-sa.xyz:80", "9951535481", "7076609071")
+                    ServerAccount("FALCON VIP 4K", "http://falcon-sa.xyz:80", "9951535481", "7076609071", "2027-11-07")
                 )
             }
-            mutableStateListOf<ServerAccount>().apply { addAll(initial) }
+            mutableStateListOf<ServerAccount>().apply { addAll(list) }
         }
 
         var selectedIndex by remember { mutableStateOf(sp.getInt("active_acc_idx", 0).coerceIn(0, (accounts.size - 1).coerceAtLeast(0))) }
         val active = accounts.getOrElse(selectedIndex) { ServerAccount("سيرفر", "", "", "") }
 
-        var currentView by remember { mutableStateOf("HOME") } // HOME, LIVE, SPORTS, VOD, SERIES
+        var currentView by remember { mutableStateOf("HOME") }
         var viewTitle by remember { mutableStateOf("") }
 
         BackHandler(enabled = currentView != "HOME") {
@@ -157,13 +222,14 @@ class MainActivity : ComponentActivity() {
         onSelectAccount: (Int) -> Unit,
         onOpenCategory: (String, String) -> Unit
     ) {
+        val sp = getSharedPreferences("messaoud_tv_data", Context.MODE_PRIVATE)
+        val gson = Gson()
         var showServerManager by remember { mutableStateOf(false) }
         var showNewDialog by remember { mutableStateOf(false) }
         var showPinDialog by remember { mutableStateOf(false) }
         val active = accounts.getOrElse(activeIndex) { ServerAccount("سيرفر", "", "", "") }
 
         Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
-            // Header Bar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -197,7 +263,6 @@ class MainActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Neo 4K 4 Cards
             Row(modifier = Modifier.fillMaxWidth().weight(1f), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 NeoCard("بث مباشر", "LIVE CHANNELS", "📺", LiveColor, Modifier.weight(1f)) {
                     onOpenCategory("LIVE", "البث المباشر والقنوات")
@@ -253,16 +318,12 @@ class MainActivity : ComponentActivity() {
                                 Text("+ إضافة يدوي", color = Color.White, fontSize = 12.sp)
                             }
                         }
-                        // old button showServerManager = false }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B))) {
-                            Text("+ إضافة اشتراك جديد", color = Color.White)
-                        }
                     }
                 },
                 confirmButton = { TextButton(onClick = { showServerManager = false }) { Text("إغلاق", color = GoldAccent) } }
             )
         }
 
-        
         if (showPinDialog) {
             var pin by remember { mutableStateOf("") }
             AlertDialog(
@@ -292,7 +353,9 @@ class MainActivity : ComponentActivity() {
                                 onSelectAccount(accounts.indexOfFirst { it.host.contains("viupru4k") })
                                 sp.edit().putString("accounts_json", gson.toJson(accounts)).apply()
                                 showPinDialog = false
+                                Toast.makeText(this@MainActivity, "تم تفعيل سيرفرك الخاص بنجاح!", Toast.LENGTH_SHORT).show()
                             } else {
+                                Toast.makeText(this@MainActivity, "الرمز غير صحيح!", Toast.LENGTH_SHORT).show()
                             }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = GoldAccent)
@@ -301,7 +364,7 @@ class MainActivity : ComponentActivity() {
                 dismissButton = { TextButton(onClick = { showPinDialog = false }) { Text("إلغاء", color = Color.White) } }
             )
         }
-    
+
         if (showNewDialog) {
             var sName by remember { mutableStateOf("") }
             var sHost by remember { mutableStateOf("http://") }
@@ -377,8 +440,8 @@ class MainActivity : ComponentActivity() {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("بحث باسم القناة أو الفيلم...", color = TextMuted) },
-                    modifier = Modifier.width(280.dp).height(50.dp),
+                    placeholder = { Text("بحث...", color = TextMuted) },
+                    modifier = Modifier.width(260.dp).height(50.dp),
                     shape = RoundedCornerShape(10.dp),
                     singleLine = true
                 )
@@ -392,7 +455,7 @@ class MainActivity : ComponentActivity() {
                 }
             } else if (filteredItems.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("لا توجد عناصر متاحة حالياً، تحقق من صحة بيانات السيرفر أو الاتصال", color = TextMuted)
+                    Text("لا توجد عناصر متاحة حالياً، تأكد من الاتصال أو بيانات السيرفر", color = TextMuted)
                 }
             } else {
                 LazyColumn(
@@ -420,10 +483,10 @@ class MainActivity : ComponentActivity() {
                                             "movie" -> "🎬"
                                             else -> "🎞️"
                                         },
-                                        fontSize = 24.sp
+                                        fontSize = 22.sp
                                     )
                                     Spacer(modifier = Modifier.width(14.dp))
-                                    Text(item.name, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                                    Text(item.name, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                                 }
                                 Text("تشغيل ▶", color = GoldAccent, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                             }
@@ -452,7 +515,7 @@ class MainActivity : ComponentActivity() {
 
             for (i in 0 until array.length().coerceAtMost(300)) {
                 val obj = array.getJSONObject(i)
-                val name = obj.optString("name", "عنصر بدون اسم")
+                val name = obj.optString("name", "بدون اسم")
                 if (catType == "SPORTS" && !name.contains("bein", ignoreCase = true) && !name.contains("sport", ignoreCase = true) && !name.contains("ssc", ignoreCase = true)) {
                     continue
                 }
