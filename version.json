@@ -1,5 +1,5 @@
 {
-  "is_active": false,
-  "blocked_message": "تم إيقاف هذا الإصدار نهائياً. يرجى التواصل مع مسعود لتحديث التطبيق.",
+  "is_active": true,
+  "blocked_message": "",
   "latest_version": "2.0.0"
 }
