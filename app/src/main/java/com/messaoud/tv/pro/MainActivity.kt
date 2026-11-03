@@ -244,7 +244,7 @@ class MainActivity : ComponentActivity() {
             Column(
                 modifier = Modifier.fillMaxSize().padding(12.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(icon, fontSize = 42.sp)
                 Spacer(modifier = Modifier.height(10.dp))
