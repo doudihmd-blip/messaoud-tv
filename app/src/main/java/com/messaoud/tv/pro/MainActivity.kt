@@ -332,10 +332,7 @@ class MainActivity : ComponentActivity() {
                                                 },
                                                 modifier = Modifier.size(36.dp)
                                             ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Delete,
-                                                    contentDescription = "حذف",
-                                                    tint = Color(0xFFEF4444)
+                                                Text("🗑️", fontSize = 18.sp)
                                                 )
                                             }
                                         }
