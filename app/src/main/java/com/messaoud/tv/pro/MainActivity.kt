@@ -508,7 +508,11 @@ class MainActivity : ComponentActivity() {
 
         val url = "${acc.host}/player_api.php?username=${acc.user}&password=${acc.pass}&action=$action"
         try {
-            val req = Request.Builder().url(url).build()
+            val req = Request.Builder()
+                .url(url)
+                .header("User-Agent", "VLC/3.0.18 LibVLC/3.0.18")
+                .header("Accept", "*/*")
+                .build()
             val resp = httpClient.newCall(req).execute()
             val body = resp.body?.string() ?: return@withContext emptyList()
             val array = JSONArray(body)
