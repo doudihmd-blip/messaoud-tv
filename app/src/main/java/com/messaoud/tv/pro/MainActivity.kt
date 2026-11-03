@@ -562,11 +562,13 @@ class MainActivity : ComponentActivity() {
             val body = resp.body?.string() ?: return@withContext emptyList()
             val array = JSONArray(body)
 
-            for (i in 0 until array.length().coerceAtMost(300)) {
+            for (i in 0 until array.length()) {
                 val obj = array.getJSONObject(i)
                 val name = obj.optString("name", "بدون اسم")
-                if (catType == "SPORTS" && !name.contains("bein", ignoreCase = true) && !name.contains("sport", ignoreCase = true) && !name.contains("ssc", ignoreCase = true)) {
-                    continue
+                if (catType == "SPORTS") {
+                    val n = name.lowercase()
+                    val isSport = n.contains("bein") || n.contains("sport") || n.contains("ssc") || n.contains("alkass") || n.contains("riyadiya") || n.contains("أبوظبي") || n.contains("كأس")
+                    if (!isSport) continue
                 }
                 val streamId = obj.optString("stream_id", obj.optString("series_id", ""))
                 val ext = obj.optString("container_extension", "mp4")
