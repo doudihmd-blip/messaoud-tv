@@ -191,7 +191,7 @@ class MainActivity : ComponentActivity() {
                     accounts = accounts,
                     activeIndex = selectedIndex,
                     onSelectAccount = { idx ->
-                        selectedIndex = idx
+                        onSelectAccount(idx)
                         sp.edit().putString("accounts_json", gson.toJson(accounts)).putInt("active_acc_idx", idx).apply()
                     },
                     onOpenCategory = { cat, title ->
@@ -292,7 +292,7 @@ class MainActivity : ComponentActivity() {
                     Column {
                         LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
                             itemsIndexed(accounts) { idx, item ->
-                                val isCur = idx == selectedIndex
+                                val isCur = idx == activeIndex
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -308,7 +308,7 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable { 
-                                                selectedIndex = idx
+                                                onSelectAccount(idx)
                                                 sp.edit().putInt("active_acc_idx", idx).apply()
                                                 showServerManager = false 
                                             }
@@ -333,8 +333,8 @@ class MainActivity : ComponentActivity() {
                                                 onClick = {
                                                     accounts.removeAt(idx)
                                                     sp.edit().putString("accounts_json", gson.toJson(accounts.toList())).apply()
-                                                    if (selectedIndex == idx) {
-                                                        selectedIndex = 0
+                                                    if (activeIndex == idx) {
+                                                        onSelectAccount(0)
                                                         sp.edit().putInt("active_acc_idx", 0).apply()
                                                     }
                                                 },
