@@ -373,16 +373,59 @@ class MainActivity : ComponentActivity() {
             var sUser by remember { mutableStateOf("") }
             var sPass by remember { mutableStateOf("") }
 
+            val fieldColors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = GoldAccent,
+                unfocusedBorderColor = Color(0xFF334155),
+                focusedLabelColor = GoldAccent,
+                unfocusedLabelColor = TextMuted,
+                cursorColor = GoldAccent
+            )
+
             AlertDialog(
                 onDismissRequest = { showNewDialog = false },
                 containerColor = CardDark,
+                modifier = Modifier.widthIn(max = 620.dp),
                 title = { Text("إضافة اشتراك جديد", color = GoldAccent, fontWeight = FontWeight.Bold) },
                 text = {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedTextField(value = sName, onValueChange = { sName = it }, label = { Text("اسم السيرفر") })
-                        OutlinedTextField(value = sHost, onValueChange = { sHost = it }, label = { Text("رابط السيرفر") })
-                        OutlinedTextField(value = sUser, onValueChange = { sUser = it }, label = { Text("اسم المستخدم") })
-                        OutlinedTextField(value = sPass, onValueChange = { sPass = it }, label = { Text("كلمة المرور") })
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedTextField(
+                                value = sName,
+                                onValueChange = { sName = it },
+                                label = { Text("اسم السيرفر") },
+                                colors = fieldColors,
+                                modifier = Modifier.weight(1f),
+                                singleLine = true
+                            )
+                            OutlinedTextField(
+                                value = sHost,
+                                onValueChange = { sHost = it },
+                                label = { Text("رابط السيرفر") },
+                                colors = fieldColors,
+                                modifier = Modifier.weight(1f),
+                                singleLine = true
+                            )
+                        }
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedTextField(
+                                value = sUser,
+                                onValueChange = { sUser = it },
+                                label = { Text("اسم المستخدم") },
+                                colors = fieldColors,
+                                modifier = Modifier.weight(1f),
+                                singleLine = true
+                            )
+                            OutlinedTextField(
+                                value = sPass,
+                                onValueChange = { sPass = it },
+                                label = { Text("كلمة المرور") },
+                                colors = fieldColors,
+                                modifier = Modifier.weight(1f),
+                                singleLine = true
+                            )
+                        }
                     }
                 },
                 confirmButton = {
@@ -393,7 +436,7 @@ class MainActivity : ComponentActivity() {
                             showNewDialog = false
                         }
                     }, colors = ButtonDefaults.buttonColors(containerColor = GoldAccent)) {
-                        Text("حفظ", color = Color.Black)
+                        Text("حفظ", color = Color.Black, fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = { TextButton(onClick = { showNewDialog = false }) { Text("إلغاء", color = Color.White) } }
