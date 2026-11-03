@@ -292,50 +292,41 @@ class MainActivity : ComponentActivity() {
                     Column {
                         LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
                             itemsIndexed(accounts) { idx, item ->
-                                val isCur = idx == selectedIndex
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .border(
-                                            width = if (isCur) 1.5.dp else 1.dp,
-                                            color = if (isCur) GoldAccent else Color(0xFF334155),
+                                            width = 1.dp,
+                                            color = Color(0xFF334155),
                                             shape = RoundedCornerShape(12.dp)
                                         ),
-                                    colors = CardDefaults.cardColors(containerColor = if (isCur) Color(0xFF1E293B) else CardDark),
+                                    colors = CardDefaults.cardColors(containerColor = CardDark),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .clickable { 
-                                                selectedIndex = idx
+                                            .clickable {
                                                 sp.edit().putInt("active_acc_idx", idx).apply()
-                                                showServerManager = false 
+                                                showServerManager = false
                                             }
                                             .padding(horizontal = 14.dp, vertical = 10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                            Text(
-                                                text = item.name,
-                                                color = Color.White,
-                                                fontWeight = if (isCur) FontWeight.Bold else FontWeight.Normal,
-                                                fontSize = 15.sp
-                                            )
-                                            if (isCur) {
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text("✓ نشط", color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                            }
-                                        }
+                                        Text(
+                                            text = item.name,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 15.sp,
+                                            modifier = Modifier.weight(1f)
+                                        )
                                         if (idx >= 2) {
                                             IconButton(
                                                 onClick = {
-                                                    accounts.removeAt(idx)
-                                                    sp.edit().putString("accounts_json", gson.toJson(accounts.toList())).apply()
-                                                    if (selectedIndex == idx) {
-                                                        selectedIndex = 0
-                                                        sp.edit().putInt("active_acc_idx", 0).apply()
+                                                    if (idx < accounts.size) {
+                                                        accounts.removeAt(idx)
+                                                        sp.edit().putString("accounts_json", gson.toJson(accounts.toList())).apply()
                                                     }
                                                 },
                                                 modifier = Modifier.size(36.dp)
