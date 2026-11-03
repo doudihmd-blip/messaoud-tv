@@ -332,8 +332,7 @@ class MainActivity : ComponentActivity() {
                                                 },
                                                 modifier = Modifier.size(36.dp)
                                             ) {
-                                                Text("🗑️", fontSize = 18.sp)
-                                                )
+                                                Text("✕", color = Color(0xFFEF4444), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                                             }
                                         }
                                     }
