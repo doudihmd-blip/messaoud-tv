@@ -23,8 +23,8 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Build APK via Gradle
-        run: gradle assembleDebug --stacktrace --info
+      - name: Build APK
+        run: gradle assembleDebug --stacktrace -Pandroid.builder.sdkDownload=true
 
       - name: Upload Messaoud TV PRO APK
         uses: actions/upload-artifact@v4
