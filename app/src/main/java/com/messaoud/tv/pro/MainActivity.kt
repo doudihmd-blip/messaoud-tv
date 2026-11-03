@@ -290,43 +290,64 @@ class MainActivity : ComponentActivity() {
                     Column {
                         LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
                             itemsIndexed(accounts) { idx, item ->
-                                val isCur = idx == activeIndex
+                            val isCur = idx == activeIndex
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .border(
+                                        width = if (isCur) 1.5.dp else 1.dp,
+                                        color = if (isCur) GoldAccent else Color(0xFF334155),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ),
+                                colors = CardDefaults.cardColors(containerColor = if (isCur) Color(0xFF1E293B) else CardDark),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(if (isCur) Color(0xFF1E293B) else Color(0xFF0F1522))
-                                        .border(1.dp, if (isCur) GoldAccent else Color.Transparent, RoundedCornerShape(8.dp))
-                                        .clickable {
-                                            onSelectAccount(idx)
-                                            showServerManager = false
-                                        }
-                                        .padding(12.dp),
+                                        .clickable { onSelectAccount(idx); showServerManager = false }
+                                        .padding(horizontal = 14.dp, vertical = 10.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(item.name, color = Color.White, fontWeight = FontWeight.SemiBold)
-                                    if (isCur) Text("نشط ✓", color = GoldAccent, fontWeight = FontWeight.Bold)
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = item.name,
+                                            color = Color.White,
+                                            fontWeight = if (isCur) FontWeight.Bold else FontWeight.Normal,
+                                            fontSize = 15.sp
+                                        )
+                                        if (isCur) {
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text("✓ نشط", color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                        }
+                                    }
+                                    if (idx >= 2) {
+                                        IconButton(
+                                            onClick = {
+                                                accounts.removeAt(idx)
+                                                if (activeIndex == idx) {
+                                                    onSelectAccount(0)
+                                                }
+                                            },
+                                            modifier = Modifier.size(36.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = "حذف السيرفر",
+                                                tint = Color(0xFFEF4444)
+                                            )
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(onClick = { showPinDialog = true; showServerManager = false }, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F766E))) {
-                                Text("🔑 حسابي الخاص", color = Color.White, fontSize = 12.sp)
-                            }
-                            Button(onClick = { showNewDialog = true; showServerManager = false }, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B))) {
-                                Text("+ إضافة يدوي", color = Color.White, fontSize = 12.sp)
-                            }
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
-                },
-                confirmButton = { TextButton(onClick = { showServerManager = false }) { Text("إغلاق", color = GoldAccent) } }
+                }
             )
-        }
 
-        if (showPinDialog) {
+            if (showPinDialog) {
             var pin by remember { mutableStateOf("") }
             AlertDialog(
                 onDismissRequest = { showPinDialog = false },
