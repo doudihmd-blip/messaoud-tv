@@ -12,6 +12,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -346,7 +348,7 @@ class MainActivity : ComponentActivity() {
                     Button(
                         onClick = {
                             if (pin == "7755") {
-                                val privateAcc = ServerAccount("VIUPRU 4K (حسابك الخاص)", "http://app.viupru4k.live:8080", "24632796", "24632796", "2027-03-30")
+                                val privateAcc = ServerAccount("SHARK VIP 4K (حسابك 2027)", "http://vip2.sharkhost.xyz:80", "9143315182", "7352465335", "2027-03-15")
                                 if (accounts.none { it.host.contains("viupru4k") }) {
                                     accounts.add(privateAcc)
                                 }
@@ -376,7 +378,7 @@ class MainActivity : ComponentActivity() {
                 containerColor = CardDark,
                 title = { Text("إضافة اشتراك جديد", color = GoldAccent, fontWeight = FontWeight.Bold) },
                 text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(value = sName, onValueChange = { sName = it }, label = { Text("اسم السيرفر") })
                         OutlinedTextField(value = sHost, onValueChange = { sHost = it }, label = { Text("رابط السيرفر") })
                         OutlinedTextField(value = sUser, onValueChange = { sUser = it }, label = { Text("اسم المستخدم") })
