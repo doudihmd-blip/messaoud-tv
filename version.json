@@ -1,5 +1,5 @@
 {
-  "latest_version": "1.0.0",
-  "apk_url": "https://github.com/doudihmd-blip/messaoud-tv/releases/latest/download/MessaoudTV_PRO.apk",
-  "changelog": "إطلاق نسخة Messaoud TV PRO الاحترافية بتصميم Neo 4K مع ميزة حفظ عدة اشتراكات والتحديث التلقائي."
+  "is_active": true,
+  "blocked_message": "تم إيقاف هذا الإصدار التجريبي. يرجى مراجعة مسعود.",
+  "latest_version": "1.0.0"
 }
