@@ -290,64 +290,79 @@ class MainActivity : ComponentActivity() {
                     Column {
                         LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
                             itemsIndexed(accounts) { idx, item ->
-                            val isCur = idx == activeIndex
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .border(
-                                        width = if (isCur) 1.5.dp else 1.dp,
-                                        color = if (isCur) GoldAccent else Color(0xFF334155),
-                                        shape = RoundedCornerShape(12.dp)
-                                    ),
-                                colors = CardDefaults.cardColors(containerColor = if (isCur) Color(0xFF1E293B) else CardDark),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Row(
+                                val isCur = idx == activeIndex
+                                Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clickable { onSelectAccount(idx); showServerManager = false }
-                                        .padding(horizontal = 14.dp, vertical = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                        .border(
+                                            width = if (isCur) 1.5.dp else 1.dp,
+                                            color = if (isCur) GoldAccent else Color(0xFF334155),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ),
+                                    colors = CardDefaults.cardColors(containerColor = if (isCur) Color(0xFF1E293B) else CardDark),
+                                    shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                        Text(
-                                            text = item.name,
-                                            color = Color.White,
-                                            fontWeight = if (isCur) FontWeight.Bold else FontWeight.Normal,
-                                            fontSize = 15.sp
-                                        )
-                                        if (isCur) {
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Text("✓ نشط", color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                        }
-                                    }
-                                    if (idx >= 2) {
-                                        IconButton(
-                                            onClick = {
-                                                accounts.removeAt(idx)
-                                                if (activeIndex == idx) {
-                                                    onSelectAccount(0)
-                                                }
-                                            },
-                                            modifier = Modifier.size(36.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Delete,
-                                                contentDescription = "حذف السيرفر",
-                                                tint = Color(0xFFEF4444)
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { onSelectAccount(idx); showServerManager = false }
+                                            .padding(horizontal = 14.dp, vertical = 10.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = item.name,
+                                                color = Color.White,
+                                                fontWeight = if (isCur) FontWeight.Bold else FontWeight.Normal,
+                                                fontSize = 15.sp
                                             )
+                                            if (isCur) {
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text("✓ نشط", color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+                                        if (idx >= 2) {
+                                            IconButton(
+                                                onClick = {
+                                                    accounts.removeAt(idx)
+                                                    if (activeIndex == idx) {
+                                                        onSelectAccount(0)
+                                                    }
+                                                },
+                                                modifier = Modifier.size(36.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Delete,
+                                                    contentDescription = "حذف",
+                                                    tint = Color(0xFFEF4444)
+                                                )
+                                            }
                                         }
                                     }
                                 }
+                                Spacer(modifier = Modifier.height(8.dp))
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
                         }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showNewDialog = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = GoldAccent)
+                    ) {
+                        Text("+ إضافة يدوي", color = Color.Black, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showServerManager = false }) {
+                        Text("إغلاق", color = Color.White)
                     }
                 }
             )
+        }
 
-            if (showPinDialog) {
+        if (showPinDialog) {
             var pin by remember { mutableStateOf("") }
             AlertDialog(
                 onDismissRequest = { showPinDialog = false },
