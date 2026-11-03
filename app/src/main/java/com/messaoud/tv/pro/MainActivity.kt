@@ -322,6 +322,7 @@ class MainActivity : ComponentActivity() {
                                                 Text("✓ نشط", color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                             }
                                         }
+                                        // يظهر زر الحذف لأي سيرفر بعد السيرفر الأساسي الأول
                                         if (idx >= 2) {
                                             IconButton(
                                                 onClick = {
