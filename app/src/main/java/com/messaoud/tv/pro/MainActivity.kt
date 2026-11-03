@@ -163,7 +163,9 @@ class MainActivity : ComponentActivity() {
                 gson.fromJson(raw, object : TypeToken<MutableList<ServerAccount>>() {}.type)
             } else {
                 mutableListOf(
-                    ServerAccount("FALCON VIP 4K", "http://falcon-sa.xyz:80", "9951535481", "7076609071", "2027-11-07")
+                    ServerAccount("FALCON VIP 4K", "http://falcon-sa.xyz:80", "9951535481", "7076609071", "2027-11-07"),
+                    ServerAccount("SHARK VIP 4K", "http://shark-iptv.net:8080", "8821447", "9963211", "2027-01-01"),
+                    ServerAccount("NEO 4K", "http://neo-aps.me:80", "8890766bc1dd", "6e4om10jzz", "2026-12-31")
                 )
             }
             mutableStateListOf<ServerAccount>().apply { addAll(list) }
@@ -290,7 +292,7 @@ class MainActivity : ComponentActivity() {
                     Column {
                         LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
                             itemsIndexed(accounts) { idx, item ->
-                                val isCur = idx == activeIndex
+                                val isCur = idx == selectedIndex
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -305,7 +307,11 @@ class MainActivity : ComponentActivity() {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .clickable { onSelectAccount(idx); showServerManager = false }
+                                            .clickable { 
+                                                selectedIndex = idx
+                                                sp.edit().putInt("active_acc_idx", idx).apply()
+                                                showServerManager = false 
+                                            }
                                             .padding(horizontal = 14.dp, vertical = 10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
@@ -322,13 +328,14 @@ class MainActivity : ComponentActivity() {
                                                 Text("✓ نشط", color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                             }
                                         }
-                                        // يظهر زر الحذف لأي سيرفر بعد السيرفر الأساسي الأول
                                         if (idx >= 2) {
                                             IconButton(
                                                 onClick = {
                                                     accounts.removeAt(idx)
-                                                    if (activeIndex == idx) {
-                                                        onSelectAccount(0)
+                                                    sp.edit().putString("accounts_json", gson.toJson(accounts.toList())).apply()
+                                                    if (selectedIndex == idx) {
+                                                        selectedIndex = 0
+                                                        sp.edit().putInt("active_acc_idx", 0).apply()
                                                     }
                                                 },
                                                 modifier = Modifier.size(36.dp)
