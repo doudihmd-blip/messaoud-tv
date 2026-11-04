@@ -166,8 +166,8 @@ class MainActivity : ComponentActivity() {
             } else {
                 mutableListOf(
                     ServerAccount("FALCON VIP 4K", "http://falcon-sa.xyz:80", "9951535481", "7076609071", "2027-11-07"),
-                    ServerAccount("SHARK VIP 4K", "http://shark-iptv.net:8080", "8821447", "9963211", "2027-01-01"),
-                    ServerAccount("NEO 4K", "http://neo-aps.me:80", "8890766bc1dd", "6e4om10jzz", "2026-12-31")
+                    ServerAccount("NEO 4K", "http://neo-aps.me:80", "8890766bc1dd", "6e4om10jzz", "2026-12-31"),
+                    ServerAccount("SHARK VIP 4K", "http://vip2.sharkhost.xyz:80", "9143315182", "7352465335", "2027-01-01")
                 )
             }
             mutableStateListOf<ServerAccount>().apply { addAll(list) }
