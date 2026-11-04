@@ -309,9 +309,10 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
-                                                sp.edit().putInt("active_acc_idx", idx).apply()
-                                                showServerManager = false
-                                            }
+                                            sp.edit().putInt("active_acc_idx", idx).apply()
+                                            onSelectAccount(idx)
+                                            showServerManager = false
+                                        }
                                             .padding(horizontal = 14.dp, vertical = 10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
