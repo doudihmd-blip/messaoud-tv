@@ -165,8 +165,8 @@ class MainActivity : ComponentActivity() {
                 gson.fromJson(raw, object : TypeToken<MutableList<ServerAccount>>() {}.type)
             } else {
                 mutableListOf(
-                    ServerAccount("NEO 4K", "http://neo-aps.me:80", "8890766bc1dd", "6e4om10jzz", "2026-12-31"),
                     ServerAccount("FALCON VIP 4K", "http://falcon-sa.xyz:80", "9951535481", "7076609071", "2027-11-07"),
+                    ServerAccount("NEO 4K", "http://neo-aps.me:80", "8890766bc1dd", "6e4om10jzz", "2026-12-31"),
                     ServerAccount("SHARK VIP 4K", "http://vip2.sharkhost.xyz:80", "9143315182", "7352465335", "2027-01-01")
                 )
             }
@@ -209,7 +209,7 @@ class MainActivity : ComponentActivity() {
                     onBack = { currentView = "HOME" },
                     onItemClick = { item ->
                         val streamUrl = when (item.streamType) {
-                            "live" -> "${active.host.trim().removeSuffix("/")}/live/${active.user.trim()}/${active.pass.trim()}/${item.streamId}.ts"
+                            "live" -> "${active.host}/live/${active.user}/${active.pass}/${item.streamId}.ts"
                             "movie" -> "${active.host}/movie/${active.user}/${active.pass}/${item.streamId}.${item.containerExt}"
                             "series" -> "${active.host}/series/${active.user}/${active.pass}/${item.streamId}.mp4"
                             else -> "${active.host}/live/${active.user}/${active.pass}/${item.streamId}.ts"
@@ -309,11 +309,10 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
-                                                selectedIndex = idx
-                                                sp.edit().putInt("active_acc_idx", idx).commit()
-                                                onSelectAccount(idx)
-                                                showServerManager = false
-                                            }
+                                            sp.edit().putInt("active_acc_idx", idx).apply()
+                                            onSelectAccount(idx)
+                                            showServerManager = false
+                                        }
                                             .padding(horizontal = 14.dp, vertical = 10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
@@ -559,7 +558,7 @@ class MainActivity : ComponentActivity() {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         when (item.streamType) {
-                                            "live" -> "${active.host.trim().removeSuffix("/")}/live/${active.user.trim()}/${active.pass.trim()}/${item.streamId}.ts"
+                                            "live" -> "📺"
                                             "movie" -> "🎬"
                                             else -> "🎞️"
                                         },
