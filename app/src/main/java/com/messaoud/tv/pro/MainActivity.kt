@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun playVideo(url: String) {
+    fun playVideo(url: String) {
         val uri = Uri.parse(url)
         val jpIntent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "video/*")
