@@ -75,20 +75,24 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun playVideo(url: String) {
-        val uri = Uri.parse(url)
-        val jpIntent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "video/*")
-            setPackage("com.brouken.player")
-            putExtra("android.media.intent.extra.HTTP_HEADERS", arrayOf("User-Agent: IPTVSmartersPro/1.0.0"))
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
         try {
-            startActivity(jpIntent)
-        } catch (_: Exception) {
-            val chooser = Intent.createChooser(Intent(Intent.ACTION_VIEW, uri).apply {
+            val uri = Uri.parse(url.trim())
+            val intent = Intent(Intent.ACTION_VIEW).apply {
                 setDataAndType(uri, "video/*")
-            }, "تشغيل عبر Just Player:")
-            startActivity(chooser)
+                setPackage("com.brouken.player")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(intent)
+        } catch (_: Exception) {
+            try {
+                val chooser = Intent.createChooser(Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(Uri.parse(url.trim()), "video/*")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }, "تشغيل عبر:")
+                startActivity(chooser)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
