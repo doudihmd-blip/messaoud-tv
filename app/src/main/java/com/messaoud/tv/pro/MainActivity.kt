@@ -207,7 +207,7 @@ class MainActivity : ComponentActivity() {
                     onBack = { currentView = "HOME" },
                     onItemClick = { item ->
                         val streamUrl = when (item.streamType) {
-                            "live" -> "${active.host}/live/${active.user}/${active.pass}/${item.streamId}.m3u8"
+                            "live" -> "${active.host.trim().removeSuffix(\"/\")}/live/${active.user.trim()}/${active.pass.trim()}/${item.streamId}.ts"
                             "movie" -> "${active.host}/movie/${active.user}/${active.pass}/${item.streamId}.${item.containerExt}"
                             "series" -> "${active.host}/series/${active.user}/${active.pass}/${item.streamId}.mp4"
                             else -> "${active.host}/live/${active.user}/${active.pass}/${item.streamId}.ts"
