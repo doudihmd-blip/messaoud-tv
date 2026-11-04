@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
                 try {
-                    val req = Request.Builder().url(configUrl).build()
+                    val req = Request.Builder().header("User-Agent", "IPTVSmartersPro/1.0.0 (Linux; Android 12)").url(configUrl).build()
                     val resp = httpClient.newCall(req).execute()
                     val body = resp.body?.string()
                     if (body != null) {
@@ -586,12 +586,17 @@ class MainActivity : ComponentActivity() {
         try {
             val req = Request.Builder()
                 .url(url)
-                .header("User-Agent", "VLC/3.0.18 LibVLC/3.0.18")
+                .header("User-Agent", "IPTVSmartersPro/1.0.0 (Linux; Android 12)")
                 .header("Accept", "*/*")
                 .build()
             val resp = httpClient.newCall(req).execute()
             val body = resp.body?.string() ?: return@withContext emptyList()
-            val array = JSONArray(body)
+            val trimmed = body.trim()
+            val array = if (trimmed.startsWith("[")) {
+                JSONArray(trimmed)
+            } else {
+                JSONArray()
+            }
 
             for (i in 0 until array.length()) {
                 val obj = array.getJSONObject(i)
