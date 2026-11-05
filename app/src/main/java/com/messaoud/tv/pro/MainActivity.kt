@@ -588,7 +588,6 @@ class MainActivity : ComponentActivity() {
             "SERIES" -> "get_series"
             else -> "get_live_streams"
         }
-
         val url = "${acc.host}/player_api.php?username=${acc.user}&password=${acc.pass}&action=$action"
         try {
             val req = Request.Builder()
@@ -604,7 +603,6 @@ class MainActivity : ComponentActivity() {
             } else {
                 JSONArray()
             }
-
             for (i in 0 until array.length()) {
                 val obj = array.getJSONObject(i)
                 val name = obj.optString("name", "بدون اسم")
@@ -613,7 +611,8 @@ class MainActivity : ComponentActivity() {
                     val isSport = n.contains("bein") || n.contains("sport") || n.contains("ssc") || n.contains("alkass") || n.contains("riyadiya") || n.contains("أبوظبي") || n.contains("كأس")
                     if (!isSport) continue
                 }
-                val streamId = (if (obj.has("stream_id")) obj.opt("stream_id")?.toString() else obj.opt("series_id")?.toString()) ?: 
+                val rawStreamId = if (obj.has("stream_id")) obj.optString("stream_id", "") else obj.optString("series_id", "")
+                val streamId = if (rawStreamId.isNotEmpty()) rawStreamId else obj.optInt("stream_id", 0).toString()
                 val ext = obj.optString("container_extension", "mp4")
                 val type = when (catType) {
                     "VOD" -> "movie"
