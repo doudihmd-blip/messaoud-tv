@@ -613,7 +613,7 @@ class MainActivity : ComponentActivity() {
                     val isSport = n.contains("bein") || n.contains("sport") || n.contains("ssc") || n.contains("alkass") || n.contains("riyadiya") || n.contains("أبوظبي") || n.contains("كأس")
                     if (!isSport) continue
                 }
-                val streamId = obj.optString("stream_id", obj.optString("series_id", ""))
+                val streamId = (if (obj.has("stream_id")) obj.opt("stream_id")?.toString() else obj.opt("series_id")?.toString()) ?: 
                 val ext = obj.optString("container_extension", "mp4")
                 val type = when (catType) {
                     "VOD" -> "movie"
