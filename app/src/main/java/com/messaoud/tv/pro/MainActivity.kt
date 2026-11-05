@@ -170,6 +170,7 @@ class MainActivity : ComponentActivity() {
             } else {
                 mutableListOf(
                     ServerAccount("PRINCE VIP", "http://pro.prince4k.com:7355", "YY5BOOMKSPOH779%40KK", "LICS7Y98CSILSCIJCC", "2038-01-19"),
+                    ServerAccount("BAZOKA (3600 Ch)", "http://bazoka.co:80", "wael8hassn", "28939133", "2028-05-07"),
                     ServerAccount("NEO 4K", "http://neo-aps.me:80", "8890766bc1dd", "6e4om10jzz", "2026-12-31")
                 )
             }
